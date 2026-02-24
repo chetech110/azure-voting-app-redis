@@ -19,7 +19,19 @@ pipeline {
       }
       stage('Run Tests') {
          steps {
-            sh(script: 'pytest ./tests/test_sample.py')
+            sh '''
+                    # Install Python tools & create venv
+                    sudo apt-get update
+                    sudo apt-get install -y python3-full python3-pip python3-venv
+                    
+                    # Setup virtual environment
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install pytest
+                    
+                    # Run tests
+                    pytest ./tests/test_sample.py -v --junitxml=test-results.xml
+                '''
          }
          post {
             success {
